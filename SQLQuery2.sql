@@ -1,6 +1,6 @@
-CREATE DATABASE LIBRARY
+CREATE DATABASE NationalLibrary
 
-USE LIBRARY
+USE NationalLibrary
 
 CREATE TABLE Authors(
 	Id int primary key identity,
@@ -8,7 +8,8 @@ CREATE TABLE Authors(
 	FromWhichCountry nvarchar(100),
 	WhenWasBorn nvarchar(25)
 )
-INSERT INTO Authors(Id, Fullname, FromWhichCountry,WhenWasBorn)
+
+INSERT INTO Authors( Fullname, FromWhichCountry,WhenWasBorn)
 VALUES ('Yann Martel','Canada','25 June 1963'),
 	   ('Alexandre Dumas','France','24 July 1802'),
 	   ('Jack London','San-Francisco','12 January  1876'),
@@ -31,6 +32,25 @@ CREATE TABLE BookDetails(
 	Pages int,
 	PublicationData nvarchar(25),
 )	
+
+INSERT INTO BookDetails(Pages,PublicationData)
+VALUES (100,'02/12/2005'),
+		(200,'02/12/2015'),
+		(300,'02/12/2012'),
+		(400,'02/12/2021'),
+		(100,'02/12/2001'),
+		(200,'02/12/2002'),
+		(300,'02/12/2003'),
+		(200,'02/12/2005'),
+		(200,'02/12/2006'),
+		(200,'02/12/2007'),
+		(200,'02/12/2008'),
+		(200,'02/12/2009'),
+		(200,'02/12/2010'),
+		(200,'02/12/2005'),
+		(250,'02/12/2005'),
+		(200,'02/12/2005'),
+		(150,'14/10/2012')
 
 ALTER TABLE BookDetails
 ADD BooksId int references Books(Id)
@@ -73,20 +93,37 @@ VALUES ('Action and Adventure'),
 	   ('Comic Book'),
 	   ('Graphic Novel'),
 	   ('Detective'),
-	   (' Mystery'),
+	   ('Mystery'),
 	   ('Fantasy'),
 	   ('Historical Fiction'),
 	   ('Horror'),
-	   ('Biographies '),
+	   ('Biographies'),
 	   ('Autobiographies'),
 	   ('True Crime')
+
+CREATE TABLE AuthorsGenres(
+	Id int primary key identity,
+	AuthorId int references Authors(Id),
+	GenreId int references Genres(Id)
+)
+
+INSERT INTO AuthorsGenres(AuthorId, GenreId)
+VALUES (1,1),
+	   (2,1),
+	   (3,1),
+	   (4,2),
+	   (5,2),
+	   (6,3),
+	   (7,3),
+	   (8,5),
+	   (9,6),
+	   (10,7)
 
 CREATE TABLE BooksGenres(
 	Id int primary key identity,
 	BookId int references Books(Id),
 	GenreId int references Genres(Id)
 )
-
 
 CREATE TABLE Customers(
 	Id int primary key identity,
@@ -110,20 +147,27 @@ CREATE TABLE BooksCustomers(
 	CustomerId int references Customers(Id)
 )
 
-SELECT * FROM Books b
-INNER JOIN BooksGenres bg
-On bg.GenreId=bg.Id
-INNER JOIN BooksGenres 
-On bg.BookId=bg.Id
-
-
+SELECT b.Name 'Book',g.Type 'Genres' FROM BooksGenres bg
+INNER JOIN Books b
+On bg.BookId=b.Id
+INNER JOIN Genres g
+On bg.GenreId=g.Id
 
 SELECT a.Fullname 'Author',b.Name 'Book' FROM Books b
 INNER JOIN Authors a
 On b.AuthorId=a.Id
 
-SELECT * FROM  Books
-SELECT * FROM Authors
-SELECT * FROM Genres
+SELECT b.Name 'Book',Price,c.Name,c.Surname,c.Age FROM BooksCustomers bc
+INNER JOIN Books b
+ON bc.BookId=b.Id
+INNER JOIN Customers c
+ON bc.CustomerId=c.Id
+
+
+SELECT Fullname,Type FROM AuthorsGenres ag
+INNER JOIN Authors a
+ON ag.AuthorId=a.Id
+INNER JOIN Genres g
+ON ag.GenreId=g.Id
 
 
